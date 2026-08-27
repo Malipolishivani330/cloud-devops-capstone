@@ -1,0 +1,32 @@
+name: Cloud DevOps CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t cloud-devops-app .
+
+      - name: Run Docker container
+        run: docker run -d -p 5000:5000 --name cloud-devops-container cloud-devops-app
+
+      - name: Wait for application
+        run: sleep 10
+
+      - name: Verify application
+        run: curl --fail http://localhost:5000
+
+      - name: Check container status
+        run: docker ps
+
+      - name: Check container logs
+        run: docker logs cloud-devops-container
